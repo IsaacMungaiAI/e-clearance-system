@@ -1,7 +1,12 @@
+// app/dashboard/student/layout.tsx
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function DashboardRouter() {
+export default async function StudentLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const supabase = await createClient();
 
   const {
@@ -16,16 +21,9 @@ export default async function DashboardRouter() {
     .eq("id", user.id)
     .single();
 
-  if (!profile) redirect("/login");
-
-  switch (profile.role) {
-    case "student":
-      redirect("/dashboard/student");
-    case "officer":
-      redirect("/dashboard/officer");
-    case "admin":
-      redirect("/dashboard/admin");
-    default:
-      redirect("/login");
+  if (profile?.role !== "student") {
+    redirect("/unauthorized");
   }
+
+  return <>{children}</>;
 }

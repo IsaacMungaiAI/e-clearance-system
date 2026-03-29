@@ -23,8 +23,8 @@ export default async function DashboardRouter() {
       redirect("/dashboard/student");
     case "officer":
       redirect("/dashboard/officer");
-    case "admin":
-      redirect("/dashboard/admin");
+    case "registrar":
+      redirect("/dashboard/registrar");
     default:
       redirect("/login");
   }

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { logout } from '@/app/actions/auth';
 
 // shadcn sidebar imports
 import {
@@ -74,12 +75,12 @@ export default function RegistrarDashboard() {
       <div className="flex min-h-screen">
 
         {/* ✅ SHADCN SIDEBAR */}
-        <Sidebar >
+        <Sidebar>
           <SidebarContent className='bg-green-700 text-white'>
             <SidebarGroup>
-              <SidebarGroupLabel className='text-white text-xl font-bold'>Registrar</SidebarGroupLabel>
-              <SidebarGroupContent className='mt-5 border-green-600 border-t'>
-                <SidebarMenu>
+              <SidebarGroupLabel className='text-white text-xl text-bold'>Registrar</SidebarGroupLabel>
+              <SidebarGroupContent className='border-t border-green-600 mt-5'>
+                <SidebarMenu >
                   <SidebarMenuItem>
                     <SidebarMenuButton onClick={() => setActiveTab('create')}>
                       Create User
@@ -110,8 +111,16 @@ export default function RegistrarDashboard() {
               </Avatar>
               <div>
                 <p className="text-sm font-medium text-white">Registrar</p>
-                <p className="text-xs text-muted-foreground text-white">admin@school.com</p>
+                <p className="text-xs text-muted-foreground">admin@school.com</p>
               </div>
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="text-sm text-red-600 hover:text-red-800 underline"
+                >
+                  Logout
+                </button>
+              </form>
             </div>
           </SidebarFooter>
         </Sidebar>
@@ -194,10 +203,101 @@ export default function RegistrarDashboard() {
               <CardHeader>
                 <CardTitle>User Management</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Coming next: table with search, filters, and actions.
-                </p>
+              <CardContent className="space-y-4">
+
+                {/* Search & Filters */}
+                <div className="flex flex-col md:flex-row gap-4">
+                  <Input placeholder="Search by name or email..." />
+
+                  <Select>
+                    <SelectTrigger className="w-[220px]">
+                      <SelectValue placeholder="Filter by role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="student">Student</SelectItem>
+                      <SelectItem value="officer_finance">Finance Officer</SelectItem>
+                      <SelectItem value="officer_library">Library Officer</SelectItem>
+                      <SelectItem value="officer_hostel">Hostel Officer</SelectItem>
+                      <SelectItem value="registrar">Registrar</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Users Table */}
+                <div className="border rounded-xl overflow-hidden bg-white">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="text-left p-3">Name</th>
+                        <th className="text-left p-3">Email</th>
+                        <th className="text-left p-3">Role</th>
+                        <th className="text-left p-3">Status</th>
+                        <th className="text-right p-3">Actions</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr className="border-t hover:bg-gray-50">
+                        <td className="p-3 font-medium">John Doe</td>
+                        <td className="p-3">john@example.com</td>
+                        <td className="p-3">Student</td>
+                        <td className="p-3">
+                          <span className="px-2 py-1 rounded bg-green-100 text-green-700 text-xs">
+                            Active
+                          </span>
+                        </td>
+                        <td className="p-3 text-right space-x-2">
+                          <Button variant="outline" size="sm">View</Button>
+                          <Button variant="outline" size="sm">Reset Password</Button>
+                          <Button variant="destructive" size="sm">Disable</Button>
+                        </td>
+                      </tr>
+
+                      <tr className="border-t hover:bg-gray-50">
+                        <td className="p-3 font-medium">Jane Smith</td>
+                        <td className="p-3">jane@example.com</td>
+                        <td className="p-3">Finance Officer</td>
+                        <td className="p-3">
+                          <span className="px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs">
+                            Pending
+                          </span>
+                        </td>
+                        <td className="p-3 text-right space-x-2">
+                          <Button variant="outline" size="sm">View</Button>
+                          <Button variant="outline" size="sm">Reset Password</Button>
+                          <Button variant="destructive" size="sm">Disable</Button>
+                        </td>
+                      </tr>
+
+                      <tr className="border-t hover:bg-gray-50">
+                        <td className="p-3 font-medium">Michael Lee</td>
+                        <td className="p-3">michael@example.com</td>
+                        <td className="p-3">Library Officer</td>
+                        <td className="p-3">
+                          <span className="px-2 py-1 rounded bg-red-100 text-red-700 text-xs">
+                            Disabled
+                          </span>
+                        </td>
+                        <td className="p-3 text-right space-x-2">
+                          <Button variant="outline" size="sm">View</Button>
+                          <Button variant="outline" size="sm">Reset Password</Button>
+                          <Button variant="destructive" size="sm">Disable</Button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-muted-foreground">Showing 1–10 of 50 users</p>
+                  <div className="space-x-2">
+                    <Button variant="outline" size="sm">Previous</Button>
+                    <Button variant="outline" size="sm">Next</Button>
+                  </div>
+                </div>
+
               </CardContent>
             </Card>
           )}

@@ -30,8 +30,28 @@ export default function OfficerDashboard() {
 
   const supabase = createClient();
 
+  useEffect(() => {
+    fetchSteps();
+  }, []);
+
   async function fetchSteps() {
     setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Get officer's department from their profile
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("department_id")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.department_id) {
+      toast.error("No department assigned to this officer");
+      setLoading(false);
+      return;
+    }
+
     const { data } = await supabase
       .from("clearance_steps")
       .select(`
@@ -43,7 +63,7 @@ export default function OfficerDashboard() {
         profiles (full_name)
       )
     `)
-      .eq("department_id", "<OFFICER_DEPT_ID>");
+      .eq("department_id", profile.department_id); // ✅ dynamic
 
     if (data) {
       const mapped: Step[] = data.map((step: any) => ({
@@ -88,7 +108,7 @@ export default function OfficerDashboard() {
 
   return (
     <div className="p-6 flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-green-700">Officer Dashboard</h1>
+      <h1 className="text-2xl font-bold text-green-700">Hostel Officer Dashboard</h1>
 
       {loading ? (
         <p>Loading students...</p>

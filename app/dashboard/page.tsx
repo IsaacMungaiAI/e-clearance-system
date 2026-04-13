@@ -21,7 +21,7 @@ export default async function DashboardRouter() {
   switch (profile.role) {
     case "student":
       redirect("/dashboard/student");
-    case "officer":
+    case "officer_hostel":
       redirect("/dashboard/officer");
     case "registrar":
       redirect("/dashboard/registrar");

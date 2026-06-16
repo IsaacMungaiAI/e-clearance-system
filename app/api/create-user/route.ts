@@ -1,6 +1,6 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
-export const runtime = "nodejs";
+export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
@@ -9,35 +9,30 @@ export async function POST(req: Request) {
 
     if (!email || !password) {
       return new Response(
-        JSON.stringify({ error: "Email and password are required" }),
+        JSON.stringify({ error: 'Email and password are required' }),
         { status: 400 }
       );
     }
 
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY!
-    );
-
+    // Use the server-only admin client which already validates env vars.
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       user_metadata: { full_name, role },
     });
-    console.log("Data:", data);
+
+    console.info('[api/create-user] created user', { email, id: data?.user?.id ?? null });
+
     if (error) {
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { status: 400 }
-      );
+      console.warn('[api/create-user] supabase error', error.message);
+      return new Response(JSON.stringify({ error: error.message }), { status: 400 });
     }
 
     return new Response(JSON.stringify({ data }), { status: 200 });
-    
-
   } catch (err: any) {
+    console.error('[api/create-user] unexpected error', err);
     return new Response(
-      JSON.stringify({ error: err.message || "Internal Server Error" }),
+      JSON.stringify({ error: err.message || 'Internal Server Error' }),
       { status: 500 }
     );
   }

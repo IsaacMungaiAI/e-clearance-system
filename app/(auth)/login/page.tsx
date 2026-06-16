@@ -1,101 +1,123 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+
+import { loginAction } from '@/app/actions/auth/login';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 
 export default function LoginPage() {
-    const supabase = createClient();
     const router = useRouter();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] =
+        useState('');
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const [loading, setLoading] =
+        useState(false);
+
+    const [error, setError] =
+        useState<string | null>(null);
+
+    async function handleSubmit(
+        e: React.FormEvent<HTMLFormElement>
+    ) {
         e.preventDefault();
+
         setLoading(true);
         setError(null);
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const result = await loginAction(
             email,
-            password,
-        });
+            password
+        );
 
         setLoading(false);
 
-        if (error) {
-            setError(error.message);
-            console.log("Error:", error.message);
+        if (!result.success) {
+            setError(result.error);
             return;
         }
-       
 
-        router.push("/dashboard");
-    };
+        router.push('/dashboard');
+        router.refresh();
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-green-50 px-4">
-            <Card className="w-full max-w-md shadow-xl border border-green-100">
-                <CardHeader className="space-y-2 text-center">
-                    <CardTitle className="text-2xl font-semibold text-green-700">
+            <Card className="w-full max-w-md">
+                <CardHeader>
+                    <CardTitle>
                         Clearance System
                     </CardTitle>
+
                     <CardDescription>
-                        Sign in to continue your clearance process
+                        Sign in to continue
                     </CardDescription>
                 </CardHeader>
 
                 <CardContent>
-                    <form onSubmit={handleLogin} className="space-y-5">
-                        <div className="space-y-2">
+                    <form
+                        onSubmit={handleSubmit}
+                        className="space-y-4"
+                    >
+                        <div>
                             <Label>Email</Label>
+
                             <Input
                                 type="email"
-                                placeholder="you@example.com"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) =>
+                                    setEmail(e.target.value)
+                                }
                                 required
                             />
                         </div>
 
-                        <div className="space-y-2">
+                        <div>
                             <Label>Password</Label>
+
                             <Input
                                 type="password"
-                                placeholder="••••••••"
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={(e) =>
+                                    setPassword(
+                                        e.target.value
+                                    )
+                                }
                                 required
                             />
                         </div>
 
                         {error && (
-                            <p className="text-sm text-red-500">{error}</p>
+                            <p className="text-red-500 text-sm">
+                                {error}
+                            </p>
                         )}
 
                         <Button
                             type="submit"
-                            className="w-full bg-green-600 hover:bg-green-700"
+                            className="w-full"
                             disabled={loading}
                         >
-                            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {loading && (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
+
                             Sign In
                         </Button>
                     </form>
-
-                    <div className="mt-6 text-center text-sm text-muted-foreground">
-                        Don’t have an account?{" "}
-                        <span className="text-green-600 font-medium cursor-pointer">
-                            Contact admin
-                        </span>
-                    </div>
                 </CardContent>
             </Card>
         </div>

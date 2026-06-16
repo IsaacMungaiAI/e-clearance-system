@@ -25,8 +25,8 @@ export default async function DashboardRouter() {
       redirect("/dashboard/hostel_officer");
     case "registrar":
       redirect("/dashboard/registrar");
-      case "officer_finance":
-        redirect("/dashboard/finance_officer");
+    case "officer_finance":
+      redirect("/dashboard/finance_officer");
     default:
       redirect("/login");
   }

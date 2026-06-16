@@ -8,11 +8,11 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { logout } from "@/app/actions/auth";
+import { logout } from "@/app/actions/auth/logout";
 
 export default async function StudentDashboard() {
   const supabase = await createClient();
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -86,14 +86,14 @@ export default async function StudentDashboard() {
           ))}
         </CardContent>
       </Card>
-     <form action={logout}>
-      <button
-        type="submit"
-        className="text-sm text-red-600 hover:text-red-800 underline"
-      >
-        Logout
-      </button>
-    </form>
+      <form action={logout}>
+        <button
+          type="submit"
+          className="text-sm text-red-600 hover:text-red-800 underline"
+        >
+          Logout
+        </button>
+      </form>
     </div>
   );
 }

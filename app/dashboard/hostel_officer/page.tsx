@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { logout } from "@/app/actions/auth";
+import { logout } from "@/app/actions/auth/logout";
 
 // Shadcn UI
 import {
@@ -607,8 +607,8 @@ export default function OfficerDashboard() {
                                       step.status === "approved"
                                         ? "border-emerald-200 bg-emerald-50 text-emerald-700 text-[11px]"
                                         : step.status === "rejected"
-                                        ? "border-red-200 bg-red-50 text-red-700 text-[11px]"
-                                        : "border-amber-200 bg-amber-50 text-amber-700 text-[11px]"
+                                          ? "border-red-200 bg-red-50 text-red-700 text-[11px]"
+                                          : "border-amber-200 bg-amber-50 text-amber-700 text-[11px]"
                                     }
                                   >
                                     {step.status === "approved" && <CheckCircle2 className="w-3 h-3 mr-1" />}

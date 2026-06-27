@@ -48,9 +48,8 @@ export default function UnauthorizedPage() {
 
       {/* Main card */}
       <div
-        className={`relative z-10 flex flex-col items-center text-center max-w-lg px-8 transition-all duration-700 ease-out ${
-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-        }`}
+        className={`relative z-10 flex flex-col items-center text-center max-w-lg px-8 transition-all duration-700 ease-out ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          }`}
       >
         {/* Icon block */}
         <div className="relative mb-8">

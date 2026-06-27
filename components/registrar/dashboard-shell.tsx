@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { Menu } from 'lucide-react';
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 
 import { RegistrarSidebar } from "./sidebar";
 
@@ -18,6 +16,7 @@ import { ClearanceTable } from "./clearance-table";
 import { Analytics } from "./analytics";
 import { Reports } from "./reports";
 import { AuditLog } from "./audit-trail";
+import CreateUserForm from "./create-user";
 
 import type { RegistrarView } from "@/types/registrar";
 
@@ -37,83 +36,81 @@ interface Props {
 export function DashboardShell({
     initialData,
 }: Props) {
-    const [activeTab, setActiveTab] =
-        useState<RegistrarView>("overview");
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState<RegistrarView>("overview");
 
     return (
         <SidebarProvider>
-            <div className="flex min-h-screen">
-                {/* Sidebar: hidden on small screens, toggled via hamburger */}
-                <aside className="hidden md:block">
-                    <RegistrarSidebar
-                        activeTab={activeTab}
-                        onChange={setActiveTab}
-                    />
-                </aside>
+            <RegistrarSidebar
+                activeTab={activeTab}
+                onChange={setActiveTab}
+            />
 
-                {/* Mobile sidebar overlay */}
-                <div className={`fixed inset-0 z-40 md:hidden ${sidebarOpen ? '' : 'pointer-events-none'}`} aria-hidden={!sidebarOpen}>
-                    <div className={`absolute inset-0 bg-black/40 transition-opacity ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`} onClick={() => setSidebarOpen(false)} />
-                    <nav className={`absolute left-0 top-0 h-full w-64 bg-white shadow-md transform transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                        <div className="p-4">
-                            <RegistrarSidebar activeTab={activeTab} onChange={(t) => { setActiveTab(t); setSidebarOpen(false); }} />
+            <SidebarInset className="flex flex-col min-h-screen">
+                <div className="flex items-center justify-between mb-6 p-4 sm:p-6 lg:p-8">
+                    <div className="flex items-center gap-4">
+                        <SidebarTrigger />
+                        <div>
+                            <h1 className="text-2xl md:text-3xl font-semibold">
+                                {activeTab === "overview" && "Overview"}
+                                {activeTab === "students" && "Students"}
+                                {activeTab === "clearances" && "Clearances"}
+                                {activeTab === "analytics" && "Analytics"}
+                                {activeTab === "reports" && "Reports"}
+                                {activeTab === "audit" && "Audit Trail"}
+                                {activeTab === "create-user" && "Create User"}
+                            </h1>
+                            <p className="text-sm text-muted-foreground">
+                                {activeTab === "overview" && "Overview of students and pending clearances"}
+                                {activeTab === "students" && "Manage all students"}
+                                {activeTab === "clearances" && "View and manage clearances"}
+                                {activeTab === "analytics" && "Clearance analytics"}
+                                {activeTab === "reports" && "Generate reports"}
+                                {activeTab === "audit" && "Audit trail of actions"}
+                                {activeTab === "create-user" && "Create new system users"}
+                            </p>
                         </div>
-                    </nav>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <div className="hidden md:block">
+                            <Input placeholder="Search students, clearances..." className="w-64 lg:w-80" />
+                        </div>
+
+                        <ModeToggle />
+                        {activeTab !== "create-user" && <Button>New Clearance</Button>}
+                    </div>
                 </div>
 
-                <main className="flex-1 bg-green-50/50 p-4 sm:p-6">
-                    <div className="flex items-center justify-between mb-4 md:mb-6">
-                        <div className="md:hidden">
-                            <button aria-label="Open sidebar" className="p-2 rounded-md hover:bg-green-100" onClick={() => setSidebarOpen(true)}>
-                                <Menu className="h-5 w-5 text-green-800" />
-                            </button>
-                        </div>
-                        <header className="mb-6 flex items-center justify-between gap-4">
-                            <div>
-                                <h1 className="text-2xl font-semibold text-green-800">Registrar Dashboard</h1>
-                                <p className="text-sm text-green-600">Overview of students and pending clearances</p>
-                            </div>
+                <div className="space-y-6 px-4 sm:px-6 lg:px-8 pb-8">
+                    {activeTab === "overview" && (
+                        <Overview stats={initialData.stats} />
+                    )}
 
-                            <div className="flex items-center gap-3">
-                                <div className="hidden md:block">
-                                    <Input placeholder="Search students, clearances..." className="w-80" />
-                                </div>
+                    {activeTab === "students" && (
+                        <StudentsTable />
+                    )}
 
-                                <Button className="bg-green-600 hover:bg-green-700 text-white">New Clearance</Button>
-                            </div>
-                        </header>
-                    </div>
+                    {activeTab === "clearances" && (
+                        <ClearanceTable />
+                    )}
 
-                    {/* Overview renders stat cards; avoid duplicate cards here */}
+                    {activeTab === "analytics" && (
+                        <Analytics />
+                    )}
 
-                    <div className="rounded-md">
-                        {activeTab === "overview" && (
-                            <Overview stats={initialData.stats} />
-                        )}
+                    {activeTab === "reports" && (
+                        <Reports />
+                    )}
 
-                        {activeTab === "students" && (
-                            <StudentsTable />
-                        )}
+                    {activeTab === "audit" && (
+                        <AuditLog />
+                    )}
 
-                        {activeTab === "clearances" && (
-                            <ClearanceTable />
-                        )}
-
-                        {activeTab === "analytics" && (
-                            <Analytics />
-                        )}
-
-                        {activeTab === "reports" && (
-                            <Reports />
-                        )}
-
-                        {activeTab === "audit" && (
-                            <AuditLog />
-                        )}
-                    </div>
-                </main>
-            </div>
+                    {activeTab === "create-user" && (
+                        <CreateUserForm />
+                    )}
+                </div>
+            </SidebarInset>
         </SidebarProvider>
     );
 }

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type ClearanceRow = {
     id: string;
@@ -32,7 +33,7 @@ export function ClearanceTable() {
     }, []);
 
     if (loading) {
-        return <p className="text-sm text-green-600">Loading pending clearances…</p>;
+        return <p className="text-sm text-muted-foreground">Loading pending clearances…</p>;
     }
 
     if (!rows || rows.length === 0) {
@@ -40,25 +41,30 @@ export function ClearanceTable() {
     }
 
     return (
-        <div className="rounded-md bg-white p-4 shadow-sm">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Student</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Requested</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {rows.map((r) => (
-                        <TableRow key={r.id}>
-                            <TableCell>{r.studentName ?? 'Unknown'}</TableCell>
-                            <TableCell>{r.status ?? '—'}</TableCell>
-                            <TableCell>{r.createdAt ? new Date(r.createdAt).toLocaleString() : '—'}</TableCell>
+        <Card>
+            <CardHeader>
+                <CardTitle>Pending Clearances</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Student</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Requested</TableHead>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
+                    </TableHeader>
+                    <TableBody>
+                        {rows.map((r) => (
+                            <TableRow key={r.id}>
+                                <TableCell>{r.studentName ?? 'Unknown'}</TableCell>
+                                <TableCell>{r.status ?? '—'}</TableCell>
+                                <TableCell>{r.createdAt ? new Date(r.createdAt).toLocaleString() : '—'}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
     );
 }

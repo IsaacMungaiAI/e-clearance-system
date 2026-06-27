@@ -4,4 +4,5 @@ export type RegistrarView =
   | 'clearances'
   | 'analytics'
   | 'reports'
-  | 'audit';
+  | 'audit'
+  | 'create-user';

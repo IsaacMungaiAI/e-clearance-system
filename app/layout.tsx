@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { createClient } from "@/lib/supabase/server";
+import { ThemeProvider } from "@/hooks/use-theme";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,10 +34,15 @@ export default async function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
-        {/* Optional: inject user context */}
-        {children}
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        <ThemeProvider
+          defaultTheme="system"
+          storageKey="theme"
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

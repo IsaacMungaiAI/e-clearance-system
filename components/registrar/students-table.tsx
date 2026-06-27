@@ -6,6 +6,15 @@ import {
 } from '@/components/ui/card';
 
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { useEffect, useMemo, useState } from 'react';
 import { ColumnDef, getCoreRowModel, useReactTable, flexRender } from '@tanstack/react-table';
 
@@ -94,37 +103,53 @@ export function StudentsTable() {
                     />
                 </div>
 
-                <div className="mt-4 overflow-auto">
+                <div className="mt-4">
                     {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
 
-                    <table className="w-full table-fixed">
-                        <thead>
+                    <Table>
+                        <TableHeader>
                             {table.getHeaderGroups().map(headerGroup => (
-                                <tr key={headerGroup.id}>
+                                <TableRow key={headerGroup.id}>
                                     {headerGroup.headers.map(header => (
-                                        <th key={header.id} className="text-left p-2">
+                                        <TableHead key={header.id}>
                                             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                        </th>
+                                        </TableHead>
                                     ))}
-                                </tr>
+                                </TableRow>
                             ))}
-                        </thead>
-                        <tbody>
+                        </TableHeader>
+                        <TableBody>
                             {table.getRowModel().rows.map(row => (
-                                <tr key={row.id} className="border-t">
+                                <TableRow key={row.id}>
                                     {row.getVisibleCells().map(cell => (
-                                        <td key={cell.id} className="p-2">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                                        <TableCell key={cell.id}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </TableCell>
                                     ))}
-                                </tr>
+                                </TableRow>
                             ))}
-                        </tbody>
-                    </table>
+                        </TableBody>
+                    </Table>
 
-                    <div className="mt-3 flex items-center justify-between">
+                    <div className="mt-4 flex items-center justify-between">
                         <div className="text-sm text-muted-foreground">{`Showing ${data.length} of ${total}`}</div>
                         <div className="flex items-center gap-2">
-                            <button className="px-2 py-1 border rounded" onClick={() => setPageIndex(Math.max(0, pageIndex - 1))} disabled={pageIndex === 0}>Prev</button>
-                            <button className="px-2 py-1 border rounded" onClick={() => setPageIndex(pageIndex + 1)} disabled={(pageIndex + 1) * pageSize >= total}>Next</button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setPageIndex(Math.max(0, pageIndex - 1))}
+                                disabled={pageIndex === 0}
+                            >
+                                Prev
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setPageIndex(pageIndex + 1)}
+                                disabled={(pageIndex + 1) * pageSize >= total}
+                            >
+                                Next
+                            </Button>
                         </div>
                     </div>
                 </div>

@@ -29,9 +29,9 @@ interface StatsCardProps {
 
 const colors = {
     emerald: {
-        bg: "bg-emerald-50",
-        icon: "text-emerald-600",
-        border: "border-emerald-100",
+        bg: "bg-accent",
+        icon: "text-primary",
+        border: "border-accent",
     },
 
     blue: {
@@ -118,17 +118,17 @@ export function StatsCard({
                     <div className="mt-5 flex items-center gap-2">
 
                         {trend.positive ? (
-                            <TrendingUp className="h-4 w-4 text-emerald-600" />
+                            <TrendingUp className="h-4 w-4 text-primary" />
                         ) : (
-                            <TrendingDown className="h-4 w-4 text-red-600" />
+                            <TrendingDown className="h-4 w-4 text-destructive" />
                         )}
 
                         <span
                             className={cn(
                                 "text-sm font-medium",
                                 trend.positive
-                                    ? "text-emerald-600"
-                                    : "text-red-600"
+                                    ? "text-primary"
+                                    : "text-destructive"
                             )}
                         >
                             {trend.value}

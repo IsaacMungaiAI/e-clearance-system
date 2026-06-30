@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import dynamic from "next/dynamic";
 
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 
@@ -10,15 +11,43 @@ import { ModeToggle } from "@/components/ui/mode-toggle";
 
 import { RegistrarSidebar } from "./sidebar";
 
-import { Overview } from "./overview";
-import { StudentsTable } from "./students-table";
-import { ClearanceTable } from "./clearance-table";
-import { Analytics } from "./analytics";
-import { Reports } from "./reports";
-import { AuditLog } from "./audit-trail";
-import CreateUserForm from "./create-user";
-
 import type { RegistrarView } from "@/types/registrar";
+import { GlassLoading } from "@/components/ui/glass-loading";
+
+const Overview = dynamic(
+    () => import("./overview").then((m) => ({ default: m.Overview })),
+    { loading: () => <GlassLoading type="stats" /> }
+);
+
+const StudentsTable = dynamic(
+    () => import("./students-table").then((m) => ({ default: m.StudentsTable })),
+    { loading: () => <GlassLoading type="table" /> }
+);
+
+const ClearanceTable = dynamic(
+    () => import("./clearance-table").then((m) => ({ default: m.ClearanceTable })),
+    { loading: () => <GlassLoading type="table" /> }
+);
+
+const Analytics = dynamic(
+    () => import("./analytics").then((m) => ({ default: m.Analytics })),
+    { loading: () => <GlassLoading type="stats" /> }
+);
+
+const Reports = dynamic(
+    () => import("./reports").then((m) => ({ default: m.Reports })),
+    { loading: () => <GlassLoading type="card" count={2} /> }
+);
+
+const AuditLog = dynamic(
+    () => import("./audit-trail").then((m) => ({ default: m.AuditLog })),
+    { loading: () => <GlassLoading type="list" /> }
+);
+
+const CreateUserForm = dynamic(
+    () => import("./create-user"),
+    { loading: () => <GlassLoading type="card" /> }
+);
 
 interface DashboardData {
     stats: {
@@ -83,31 +112,45 @@ export function DashboardShell({
 
                 <div className="space-y-6 px-4 sm:px-6 lg:px-8 pb-8">
                     {activeTab === "overview" && (
-                        <Overview stats={initialData.stats} />
+                        <Suspense fallback={<GlassLoading type="stats" />}>
+                            <Overview stats={initialData.stats} />
+                        </Suspense>
                     )}
 
                     {activeTab === "students" && (
-                        <StudentsTable />
+                        <Suspense fallback={<GlassLoading type="table" />}>
+                            <StudentsTable />
+                        </Suspense>
                     )}
 
                     {activeTab === "clearances" && (
-                        <ClearanceTable />
+                        <Suspense fallback={<GlassLoading type="table" />}>
+                            <ClearanceTable />
+                        </Suspense>
                     )}
 
                     {activeTab === "analytics" && (
-                        <Analytics />
+                        <Suspense fallback={<GlassLoading type="stats" />}>
+                            <Analytics />
+                        </Suspense>
                     )}
 
                     {activeTab === "reports" && (
-                        <Reports />
+                        <Suspense fallback={<GlassLoading type="card" count={2} />}>
+                            <Reports />
+                        </Suspense>
                     )}
 
                     {activeTab === "audit" && (
-                        <AuditLog />
+                        <Suspense fallback={<GlassLoading type="list" />}>
+                            <AuditLog />
+                        </Suspense>
                     )}
 
                     {activeTab === "create-user" && (
-                        <CreateUserForm />
+                        <Suspense fallback={<GlassLoading type="card" />}>
+                            <CreateUserForm />
+                        </Suspense>
                     )}
                 </div>
             </SidebarInset>

@@ -36,7 +36,7 @@ type Student = {
 
 const statusIcon: Record<string, React.ReactNode> = {
     pending: <Clock className="h-4 w-4 text-yellow-500" />,
-    approved: <CheckCircle2 className="h-4 w-4 text-green-500" />,
+        approved: <CheckCircle2 className="h-4 w-4 text-primary" />,
     rejected: <XCircle className="h-4 w-4 text-red-500" />,
 };
 

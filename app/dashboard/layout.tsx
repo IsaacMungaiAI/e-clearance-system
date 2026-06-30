@@ -10,7 +10,7 @@ export default function DashboardLayout({
      
 
       {/* Main */}
-      <main className="flex-1 bg-green-50 overflow-auto">
+      <main className="flex-1 bg-background overflow-auto">
         {children}
       </main>
     </div>

@@ -1,7 +1,8 @@
 // lib/getUserProfile.ts
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
-export async function getUserProfile() {
+export const getUserProfile = cache(async () => {
   const supabase = await createClient();
 
   const {
@@ -17,4 +18,4 @@ export async function getUserProfile() {
     .single();
 
   return { user, profile };
-}
+});

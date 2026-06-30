@@ -127,7 +127,7 @@ export function Reports() {
                             <div className="flex items-start justify-between">
                                 <div className="space-y-1">
                                     <CardTitle className="text-base flex items-center gap-2">
-                                        <report.icon className="h-5 w-5 text-emerald-600" />
+                                        <report.icon className="h-5 w-5 text-primary" />
                                         {report.title}
                                     </CardTitle>
                                     <CardDescription>

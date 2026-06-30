@@ -113,7 +113,7 @@ export default function CreateUserForm() {
         </form>
 
         {message && (
-          <p className={`mt-4 text-center text-sm ${message.includes('Error') || message.includes('Request failed') ? 'text-destructive' : 'text-green-600 dark:text-green-400'}`}>
+          <p className={`mt-4 text-center text-sm ${message.includes('Error') || message.includes('Request failed') ? 'text-destructive' : 'text-primary'}`}>
             {message}
           </p>
         )}

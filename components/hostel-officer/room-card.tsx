@@ -50,7 +50,7 @@ export function RoomCard({
 }: RoomCardProps) {
     const inspectionColor = {
         passed:
-            "bg-emerald-100 text-emerald-700 border-emerald-200",
+            "bg-primary/10 text-primary border-primary/20",
 
         pending:
             "bg-amber-100 text-amber-700 border-amber-200",
@@ -88,7 +88,7 @@ export function RoomCard({
                         className={cn(
                             "rounded-xl p-3",
                             occupied
-                                ? "bg-emerald-50"
+                                ? "bg-primary/10"
                                 : "bg-blue-50"
                         )}
                     >
@@ -96,7 +96,7 @@ export function RoomCard({
                             className={cn(
                                 "h-6 w-6",
                                 occupied
-                                    ? "text-emerald-600"
+                                    ? "text-primary"
                                     : "text-blue-600"
                             )}
                         />
@@ -120,7 +120,7 @@ export function RoomCard({
                             variant="outline"
                             className={
                                 occupied
-                                    ? "border-emerald-200 text-emerald-700"
+                                    ? "border-primary/20 text-primary"
                                     : "border-blue-200 text-blue-700"
                             }
                         >

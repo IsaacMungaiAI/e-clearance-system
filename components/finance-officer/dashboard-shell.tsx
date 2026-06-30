@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import dynamic from "next/dynamic";
 
 import {
     SidebarProvider,
@@ -12,12 +13,29 @@ import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 
 import { FinanceSidebar } from "./sidebar";
-import { Overview } from "./overview";
-import { FeeClearances } from "./fee-clearances";
-import { Students } from "./students";
-import { Reports } from "./reports";
+import { GlassLoading } from "@/components/ui/glass-loading";
 
 import type { FinanceView } from "@/types/finance";
+
+const Overview = dynamic(
+    () => import("./overview").then((m) => ({ default: m.Overview })),
+    { loading: () => <GlassLoading type="stats" /> }
+);
+
+const FeeClearances = dynamic(
+    () => import("./fee-clearances").then((m) => ({ default: m.FeeClearances })),
+    { loading: () => <GlassLoading type="table" /> }
+);
+
+const Students = dynamic(
+    () => import("./students").then((m) => ({ default: m.Students })),
+    { loading: () => <GlassLoading type="table" /> }
+);
+
+const Reports = dynamic(
+    () => import("./reports").then((m) => ({ default: m.Reports })),
+    { loading: () => <GlassLoading type="card" count={2} /> }
+);
 
 interface DashboardData {
     stats: {
@@ -93,11 +111,28 @@ export function DashboardShell({
 
                 <div className="space-y-6 px-4 sm:px-6 lg:px-8 pb-8">
                     {activeTab === "overview" && (
-                        <Overview stats={initialData.stats} />
+                        <Suspense fallback={<GlassLoading type="stats" />}>
+                            <Overview stats={initialData.stats} />
+                        </Suspense>
                     )}
-                    {activeTab === "fee-clearances" && <FeeClearances />}
-                    {activeTab === "students" && <Students />}
-                    {activeTab === "reports" && <Reports />}
+
+                    {activeTab === "fee-clearances" && (
+                        <Suspense fallback={<GlassLoading type="table" />}>
+                            <FeeClearances />
+                        </Suspense>
+                    )}
+
+                    {activeTab === "students" && (
+                        <Suspense fallback={<GlassLoading type="table" />}>
+                            <Students />
+                        </Suspense>
+                    )}
+
+                    {activeTab === "reports" && (
+                        <Suspense fallback={<GlassLoading type="card" count={2} />}>
+                            <Reports />
+                        </Suspense>
+                    )}
                 </div>
             </SidebarInset>
         </SidebarProvider>

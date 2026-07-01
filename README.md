@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kafu Clearance System
+
+A university clearance workflow system built with Next.js 16, React 19, Supabase, and Drizzle ORM. Streamlines student clearance through multiple departmental steps (finance, library, hostel) with final approval by the registrar.
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **UI Library**: React 19 + TypeScript
+- **Styling**: Tailwind CSS v4 + tw-animate-css
+- **Components**: Base UI + shadcn/ui
+- **Database**: PostgreSQL (Supabase) with Drizzle ORM
+- **Auth**: Supabase Auth (email/password)
+- **Icons**: Lucide React
+- **Tables**: TanStack React Table
+- **Toasts**: Sonner
+
+## Roles
+
+| Role              | Description                          |
+| ----------------- | ------------------------------------ |
+| `student`         | Applies for and tracks clearance     |
+| `officer_finance` | Manages fee clearance step           |
+| `officer_library` | Manages library clearance step       |
+| `officer_hostel`  | Manages hostel clearance & rooms     |
+| `registrar`       | Oversees all requests, creates users |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 20+
+- A Supabase project (configure via `.env`)
+
+### Environment Variables
+
+Copy the following into your `.env` file:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<your-service-role-key>
+DATABASE_URL=<your-postgres-connection-string>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Install & Run
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+### Database
 
-To learn more about Next.js, take a look at the following resources:
+Run migrations with Drizzle Kit:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npx drizzle-kit push
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Generate new migrations after schema changes:
 
-## Deploy on Vercel
+```bash
+npx drizzle-kit generate
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+├── app/
+│   ├── (auth)/login          # Login page
+│   ├── actions/              # Server actions (auth, student, finance-officer, hostel-officer, registrar, users)
+│   ├── admin/                # Admin routes
+│   ├── api/                  # API routes (clearances, create-user, finance-officer, hostel-officer, students)
+│   ├── dashboard/            # Role-based dashboards
+│   │   ├── student/
+│   │   ├── finance_officer/
+│   │   ├── hostel_officer/   # Also includes rooms, residents, requests, reports, notifications
+│   │   ├── registrar/
+│   │   └── createUser/
+│   ├── db/                   # Drizzle schema, relations, client
+│   └── globals.css
+├── components/               # UI components organized by role
+│   ├── student/
+│   ├── finance-officer/
+│   ├── hostel-officer/
+│   ├── registrar/
+│   └── ui/                   # Shared UI primitives
+├── drizzle/                  # Generated SQL migration files
+├── hooks/                    # Custom React hooks (use-theme, etc.)
+├── lib/                      # Utility functions and Supabase clients
+│   └── supabase/             # Server, client, admin, and proxy helpers
+├── public/                   # Static assets
+└── types/                    # Shared TypeScript types (user, clearance status, etc.)
+```
+
+## Features
+
+- **Role-based access control** — dashboards scoped by user role
+- **Multi-step clearance workflow** — each department (finance, library, hostel) approves or rejects independently
+- **Room management** — Hostel officers can assign rooms and track residents
+- **Audit & activity logs** — all state-changing actions are recorded
+- **Notifications** — per-user notification system
+- **Registrar oversight** — create users, view analytics, search students, audit trail

@@ -1,6 +1,4 @@
-// app/dashboard/officer/layout.tsx
-
-// app/dashboard/officer/layout.tsx
+// app/dashboard/hostel_officer/layout.tsx
 import { redirect } from "next/navigation";
 import { getUserProfile } from "@/lib/getUserProfile";
 

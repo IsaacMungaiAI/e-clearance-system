@@ -6,6 +6,10 @@ import { HostelSidebar } from "@/components/hostel-officer/hostel-sidebar";
 import { GlassLoading } from "@/components/ui/glass-loading";
 
 import { getUserProfile } from "@/lib/getUserProfile";
+import { getDashboardStats } from "@/app/actions/hostel-officer/get-dashboard-stats";
+import { getClearanceRequests } from "@/app/actions/hostel-officer/get-clearance-requests";
+import { getRooms } from "@/app/actions/hostel-officer/get-rooms";
+import { getNotifications } from "@/app/actions/hostel-officer/get-notifications";
 
 const HostelContent = dynamic(
     () =>
@@ -24,6 +28,17 @@ export default async function HostelOfficerPage() {
         "Hostel Officer";
 
     const userEmail = session?.user?.email;
+    const userId = session?.user?.id;
+
+    const { stats } = await getDashboardStats();
+    const clearanceRequests = await getClearanceRequests();
+    const roomsList = await getRooms();
+    const notificationsData = userId ? await getNotifications(userId) : [];
+
+    const pendingRequests = clearanceRequests.filter(
+        (r) => r.status === "pending"
+    );
+    const activeNotifications = notificationsData.filter((n) => !n.read);
 
     return (
         <DashboardShell
@@ -34,7 +49,12 @@ export default async function HostelOfficerPage() {
             userEmail={userEmail}
         >
             <Suspense fallback={<GlassLoading type="stats" />}>
-                <HostelContent />
+                <HostelContent
+                    stats={stats}
+                    pendingRequests={pendingRequests.length}
+                    roomsList={roomsList}
+                    unreadNotifications={activeNotifications.length}
+                />
             </Suspense>
         </DashboardShell>
     );

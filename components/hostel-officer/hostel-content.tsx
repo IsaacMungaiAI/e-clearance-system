@@ -1,6 +1,5 @@
 'use client';
 
-import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import {
     ArrowUpRight,
@@ -39,88 +38,44 @@ const RoomCard = dynamic(
     { loading: () => <GlassLoading type="card" /> }
 );
 
-const roomCards = [
-    {
-        roomNumber: "A-12",
-        hostelName: "Riverside Hostel",
-        occupant: "Brian Otieno",
-        occupied: true,
-        inspectionStatus: "passed" as const,
-        maintenanceRequired: false,
-        capacity: 2,
-        occupants: 2,
-    },
-    {
-        roomNumber: "B-04",
-        hostelName: "Summit Hostel",
-        occupant: "Vacant",
-        occupied: false,
-        inspectionStatus: "pending" as const,
-        maintenanceRequired: true,
-        capacity: 1,
-        occupants: 0,
-    },
-    {
-        roomNumber: "C-09",
-        hostelName: "Oak Residence",
-        occupant: "Mercy Wanjiku",
-        occupied: true,
-        inspectionStatus: "passed" as const,
-        maintenanceRequired: false,
-        capacity: 1,
-        occupants: 1,
-    },
-];
+interface RoomData {
+    id: string;
+    roomNumber: string;
+    hostelName: string;
+    capacity: number;
+    floor: number | null;
+    status: string | null;
+    occupantCount: number;
+}
 
-const activityItems = [
-    {
-        title: "New clearance request received",
-        description:
-            "A third-year student from Computer Science submitted hostel clearance for review.",
-        time: "12 min ago",
-        icon: ClipboardList,
-        accent: "emerald",
-    },
-    {
-        title: "Room inspection scheduled",
-        description:
-            "Block B maintenance checks have been queued for this afternoon.",
-        time: "45 min ago",
-        icon: CalendarClock,
-        accent: "amber",
-    },
-    {
-        title: "Occupancy threshold exceeded",
-        description:
-            "North Wing is currently at 94% capacity and should be monitored closely.",
-        time: "Today",
-        icon: ShieldAlert,
-        accent: "red",
-    },
-];
+interface Stats {
+    students: number;
+    pending: number;
+    approved: number;
+    rejected: number;
+    totalClearances: number;
+    totalRooms: number;
+    occupiedRooms: number;
+}
 
-const priorityItems = [
-    {
-        label: "Pending clearance reviews",
-        value: "18",
-        tone: "amber",
-    },
-    {
-        label: "Rooms requiring attention",
-        value: "6",
-        tone: "red",
-    },
-    {
-        label: "Rooms currently in use",
-        value: "87",
-        tone: "emerald",
-    },
-];
+interface HostelContentProps {
+    stats: Stats;
+    pendingRequests: number;
+    roomsList: RoomData[];
+    unreadNotifications: number;
+}
 
-export function HostelContent() {
+export function HostelContent({
+    stats,
+    pendingRequests,
+    roomsList,
+    unreadNotifications,
+}: HostelContentProps) {
+    const roomsToShow = roomsList.slice(0, 6);
+
     return (
         <div className="space-y-8">
-            <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary via-primary/80 to-primary/60 text-white shadow-lg">
+            <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-green-600 via-green-500 to-green-800 text-white shadow-lg">
                 <CardContent className="grid gap-8 p-6 lg:grid-cols-[1.25fr_0.75fr] lg:p-8">
                     <div className="space-y-5">
                         <Badge className="w-fit border-white/15 bg-white/15 text-white hover:bg-white/20">
@@ -133,7 +88,7 @@ export function HostelContent() {
                                 clearance requests under control from one
                                 place.
                             </h2>
-                            <p className="max-w-2xl text-sm text-white/80 md:text-base">
+                            <p className="max-w-2xl text-sm text-white/90 md:text-base">
                                 Review occupancy, flag maintenance issues, and
                                 respond to student requests before they slow
                                 down the clearance process.
@@ -157,41 +112,45 @@ export function HostelContent() {
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                         <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
                             <div className="flex items-center justify-between gap-3">
-                                <p className="text-sm text-white/70">
+                                <p className="text-sm text-white/85">
                                     Today&apos;s inspections
                                 </p>
                                 <CheckCircle2 className="h-4 w-4" />
                             </div>
-                            <p className="mt-2 text-3xl font-semibold">14</p>
-                            <p className="mt-1 text-sm text-white/70">
-                                6 rooms still need follow-up
+                            <p className="mt-2 text-3xl font-semibold">
+                                {pendingRequests > 0 ? pendingRequests : 0}
+                            </p>
+                            <p className="mt-1 text-sm text-white/85">
+                                {pendingRequests} clearance
+                                request{pendingRequests !== 1 ? "s" : ""} pending
                             </p>
                         </div>
 
                         <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
                             <div className="flex items-center justify-between gap-3">
-                                <p className="text-sm text-white/70">
+                                <p className="text-sm text-white/85">
                                     Notifications
                                 </p>
                                 <BellRing className="h-4 w-4" />
                             </div>
-                            <p className="mt-2 text-3xl font-semibold">9</p>
-                            <p className="mt-1 text-sm text-white/70">
-                                3 are marked urgent
+                            <p className="mt-2 text-3xl font-semibold">
+                                {unreadNotifications}
+                            </p>
+                            <p className="mt-1 text-sm text-white/85">
+                                {unreadNotifications} unread
+                                notification{unreadNotifications !== 1 ? "s" : ""}
                             </p>
                         </div>
                     </div>
                 </CardContent>
             </Card>
 
-            <Suspense fallback={<GlassLoading type="stats" />}>
-                <HostelStats
-                    pending={18}
-                    approved={126}
-                    rejected={4}
-                    occupiedRooms={87}
-                />
-            </Suspense>
+            <HostelStats
+                pending={stats.pending}
+                approved={stats.approved}
+                rejected={stats.rejected}
+                occupiedRooms={stats.occupiedRooms}
+            />
 
             <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
                 <Card>
@@ -203,7 +162,23 @@ export function HostelContent() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4 sm:grid-cols-3">
-                        {priorityItems.map((item) => (
+                        {[
+                            {
+                                label: "Pending clearance reviews",
+                                value: String(stats.pending),
+                                tone: "amber" as const,
+                            },
+                            {
+                                label: "Total rooms",
+                                value: String(stats.totalRooms),
+                                tone: "red" as const,
+                            },
+                            {
+                                label: "Rooms currently in use",
+                                value: String(stats.occupiedRooms),
+                                tone: "emerald" as const,
+                            },
+                        ].map((item) => (
                             <div
                                 key={item.label}
                                 className="rounded-2xl border bg-muted/25 p-4"
@@ -266,42 +241,46 @@ export function HostelContent() {
                 </Card>
             </section>
 
-            <section>
-                <div className="mb-4 flex items-center justify-between">
-                    <div>
-                        <h2 className="text-xl font-semibold tracking-tight">
-                            Room overview
-                        </h2>
-                        <p className="text-sm text-muted-foreground">
-                            Spot occupancy and inspection issues at a glance.
-                        </p>
+            {roomsToShow.length > 0 && (
+                <section>
+                    <div className="mb-4 flex items-center justify-between">
+                        <div>
+                            <h2 className="text-xl font-semibold tracking-tight">
+                                Room overview
+                            </h2>
+                            <p className="text-sm text-muted-foreground">
+                                Spot occupancy and inspection issues at a glance.
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button variant="outline">Export</Button>
+                            <Button>Open room map</Button>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Button variant="outline">Export</Button>
-                        <Button>Open room map</Button>
-                    </div>
-                </div>
 
-                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                    {roomCards.map((room) => (
-                        <Suspense
-                            key={room.roomNumber}
-                            fallback={<GlassLoading type="card" />}
-                        >
+                    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                        {roomsToShow.map((room) => (
                             <RoomCard
+                                key={room.id}
                                 roomNumber={room.roomNumber}
                                 hostelName={room.hostelName}
-                                occupant={room.occupant}
-                                occupied={room.occupied}
-                                inspectionStatus={room.inspectionStatus}
-                                maintenanceRequired={room.maintenanceRequired}
+                                occupant={
+                                    room.occupantCount > 0
+                                        ? "Occupied"
+                                        : "Vacant"
+                                }
+                                occupied={room.occupantCount > 0}
+                                inspectionStatus="pending"
+                                maintenanceRequired={
+                                    room.status === "maintenance"
+                                }
                                 capacity={room.capacity}
-                                occupants={room.occupants}
+                                occupants={room.occupantCount}
                             />
-                        </Suspense>
-                    ))}
-                </div>
-            </section>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
                 <Card>
@@ -313,7 +292,33 @@ export function HostelContent() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        {activityItems.map((item) => {
+                        {[
+                            {
+                                title: `${stats.pending} clearance request${stats.pending !== 1 ? "s" : ""} pending review`,
+                                description: `Hostel office has ${stats.pending} clearance step${stats.pending !== 1 ? "s" : ""} awaiting decision.`,
+                                time: "Today",
+                                icon: ClipboardList,
+                                accent: "emerald" as const,
+                            },
+                            ...(stats.occupiedRooms > 0
+                                ? [
+                                      {
+                                          title: `${stats.occupiedRooms} rooms currently occupied`,
+                                          description: `${stats.totalRooms - stats.occupiedRooms} room${stats.totalRooms - stats.occupiedRooms !== 1 ? "s" : ""} available across all hostels.`,
+                                          time: "Today",
+                                          icon: CalendarClock,
+                                          accent: "amber" as const,
+                                      },
+                                  ]
+                                : []),
+                            {
+                                title: `${stats.approved} hostel clearances approved`,
+                                description: `${stats.rejected} clearance${stats.rejected !== 1 ? "s" : ""} rejected this term.`,
+                                time: "This term",
+                                icon: ShieldAlert,
+                                accent: "red" as const,
+                            },
+                        ].map((item) => {
                             const Icon = item.icon;
 
                             const accentClasses =
@@ -368,13 +373,15 @@ export function HostelContent() {
                                     <Building2 className="h-4 w-4" />
                                 </div>
                                 <div>
-                                    <p className="font-medium">Hostels monitored</p>
+                                    <p className="font-medium">Total rooms</p>
                                     <p className="text-sm text-muted-foreground">
-                                        4 active residential blocks
+                                        {stats.totalRooms} rooms across hostels
                                     </p>
                                 </div>
                             </div>
-                            <Badge variant="secondary">Active</Badge>
+                            <Badge variant="secondary">
+                                {stats.totalRooms}
+                            </Badge>
                         </div>
 
                         <Separator />
@@ -397,7 +404,13 @@ export function HostelContent() {
                                 variant="outline"
                                 className="border-primary/20 text-primary"
                             >
-                                87%
+                                {stats.totalRooms > 0
+                                    ? `${Math.round(
+                                          (stats.occupiedRooms /
+                                              stats.totalRooms) *
+                                              100
+                                      )}%`
+                                    : "0%"}
                             </Badge>
                         </div>
 
@@ -410,10 +423,10 @@ export function HostelContent() {
                                 </div>
                                 <div>
                                     <p className="font-medium">
-                                        Flagged maintenance items
+                                        Pending clearances
                                     </p>
                                     <p className="text-sm text-muted-foreground">
-                                        Needs inspection this week
+                                        Needs hostel office review
                                     </p>
                                 </div>
                             </div>
@@ -421,7 +434,7 @@ export function HostelContent() {
                                 variant="outline"
                                 className="border-amber-200 text-amber-700"
                             >
-                                6 open
+                                {stats.pending} open
                             </Badge>
                         </div>
                     </CardContent>

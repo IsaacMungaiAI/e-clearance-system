@@ -4,6 +4,8 @@ import {
   profiles,
   clearanceRequests,
   clearanceSteps,
+  rooms,
+  roomAssignments,
 } from "./schema";
 
 /**
@@ -24,6 +26,7 @@ export const profilesRelations = relations(profiles, ({ one, many }) => ({
   }),
 
   clearanceRequests: many(clearanceRequests),
+  roomAssignments: many(roomAssignments),
 }));
 
 /**
@@ -55,6 +58,30 @@ export const clearanceStepsRelations = relations(
     department: one(departments, {
       fields: [clearanceSteps.departmentId],
       references: [departments.id],
+    }),
+  })
+);
+
+/**
+ * ROOMS
+ */
+export const roomsRelations = relations(rooms, ({ many }) => ({
+  roomAssignments: many(roomAssignments),
+}));
+
+/**
+ * ROOM ASSIGNMENTS
+ */
+export const roomAssignmentsRelations = relations(
+  roomAssignments,
+  ({ one }) => ({
+    student: one(profiles, {
+      fields: [roomAssignments.studentId],
+      references: [profiles.id],
+    }),
+    room: one(rooms, {
+      fields: [roomAssignments.roomId],
+      references: [rooms.id],
     }),
   })
 );

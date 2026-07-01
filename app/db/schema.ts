@@ -5,6 +5,8 @@ import {
   timestamp,
   boolean,
   jsonb,
+  integer,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 /**
@@ -136,6 +138,32 @@ export const activityLogs =
         .defaultNow(),
   });
 
+
+/**
+ * ROOMS
+ */
+export const rooms = pgTable("rooms", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  roomNumber: varchar("room_number", { length: 20 }).notNull(),
+  hostelName: varchar("hostel_name", { length: 100 }).notNull(),
+  capacity: integer("capacity").notNull().default(2),
+  floor: integer("floor"),
+  status: varchar("status", { length: 20 }).notNull().default("available"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+/**
+ * ROOM ASSIGNMENTS (residents)
+ */
+export const roomAssignments = pgTable("room_assignments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  studentId: uuid("student_id").notNull().references(() => profiles.id),
+  roomId: uuid("room_id").notNull().references(() => rooms.id),
+  checkInDate: timestamp("check_in_date").defaultNow(),
+  checkOutDate: timestamp("check_out_date"),
+  status: varchar("status", { length: 20 }).notNull().default("active"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
 //notifications table for storing user notifications in the system
 export const notifications =
